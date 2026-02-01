@@ -1,141 +1,225 @@
-// Wait until page fully loads, then run this code
+// SIMPLE CALENDAR DISPLAY SYSTEM
+
+// When page loads
 document.addEventListener('DOMContentLoaded', function() {
+    console.log("✅ Website loaded successfully");
     
-    // *Google Calendar Integration*
-
-    // Default Google Calendar embed code (replace with YOUR OWN CODE)
-const DEFAULT_CALENDAR_URL = "https://calendar.google.com/calendar/embed?src=en.usa%23holiday%40group.v.calendar.google.com&ctz=America%2FNew_York";
-    // Load calendar when page loads
+    // Load any saved calendar
     loadSavedCalendar();
-
-    // Load Calendar Button
-    document.getElementById('load-calendar').addEventListener('click', function() {
-        loadCustomCalendar();
-    });
-        
-    // Booking Form Submission
-    document.getElementById('bookingForm').addEventListener('submit', function(e) {
-        e.preventDefault();
-        bookAppointment();
-    });
-
-    // ====== CALENDAR FUNCTIONS ======
-
-    // Load user's saved calendar or default
-    function loadSavedCalendar() {
-        // Check if user previously saved a calendar URL
-        const savedUrl = localStorage.getItem('userCalendarUrl');
-        const urlToLoad = savedUrl || DEFAULT_CALENDAR_URL;
-
-        document.getElementById('calendar-url').value = savedUrl || '';
-        displayCalendar(urlToLoad);
-    }
-
-    // Display calendar in iframe
-    function displayCalendar(calendarUrl) {
-        const calendarDiv = document.getElementById('google-calendar');
-        
-        // Create iframe for Google Calendar
-        calendarDiv.innerHTML = `
-            <iframe src="${calendarUrl}"
-                    class="calendar-iframe"
-                    frameborder="0"
-                    scrolling="no">
-            </iframe>
-            <p><small>Can't see calendar? <a href="${calendarUrl}" target="_blank">Open in new tab</a></small></p>
-        `;
-    }
-
-    // Load custom calendar from user input
-    function loadCustomCalendar() {
-        const calendarUrl = document.getElementById('calendar-url').value.trim();
-
-        if(!calendarUrl) {
-            alert('Please enter a calendar URL');
-            return;
-        }
-
-        // Save to browser storage for future visits
-        localStorage.setItem('userCalendarUrl', calendarUrl);
-
-        // Display the calendar
-        displayCalendar(calendarUrl);
-
-        alert('Calendar saved! It will load automatically next time.');
-    }
-
-    // Handle booking appointment
-    function bookAppointment() {
-        const form = document.getElementById('bookingForm');
-        const date = document.getElementById('appointment-date').value;
-        const time = document.getElementById('appointment-time').value;
-
-        // Get user's calendar URL
-        const calendarUrl = localStorage.getItem('userCalendarUrl') || DEFAULT_CALENDAR_URL;
-
-        if (!date || !time) {
-            alert('Please select both date and time');
-            return;
-        }
-
-        // Create google calendar event link
-        const appointmentDateTime = `${date}T${time}:00`;
-        const endDateTime = `${date}T${addOneHour(time)}:00`;
-
-        // Google calendar event creation URL
-        const googleCalendarUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&dates=${appointmentDateTime}/${endDateTime}&details=Appointment booked via website&location=Online`;
-
-        // Open in new tab
-        window.open(googleCalendarUrl, '_blank');
-
-        // Show confirmation
-        alert(`Appointment booked for ${date} at ${time}. A Google Calendar event has been created.`);
-        form.reset();
-    }
-
-    // Helper: Add 1 hour to time for end time
-    function addOneHour(time) {
-        const [hours, minutes] = time.split(':').map(Number);
-        const newHour = (hours + 1) % 24;
-        return newHour.toString().padStart(2, '0') + ':' + minutes.toString().padStart(2, '0');
-    }
-
-    // ====== PART 3: SMOOTH SCROLLING ======
-    // Get all navigation links
-    const navLinks = document.querySelectorAll('nav a');
     
-    // Add click event to each navigation link
-    navLinks.forEach(anchor => {
-        anchor.addEventListener('click', function(e) {
-            // Prevent default jump-to-section behavior
+    // Setup the Load Calendar button
+    document.getElementById('load-calendar').addEventListener('click', loadCalendar);
+    
+    // Setup booking form
+    document.getElementById('bookingForm').addEventListener('submit', bookAppointment);
+    
+    // Setup smooth scrolling for nav links
+    setupSmoothScroll();
+});
+
+// ====================
+// MAIN CALENDAR FUNCTIONS
+// ====================
+
+function loadSavedCalendar() {
+    // Check if user saved a calendar URL before
+    const savedUrl = localStorage.getItem('myCalendarUrl');
+    
+    if (savedUrl) {
+        console.log("📁 Found saved calendar URL:", savedUrl);
+        document.getElementById('calendar-url').value = savedUrl;
+        showCalendar(savedUrl);
+    } else {
+        console.log("ℹ️ No saved calendar found");
+    }
+}
+
+function loadCalendar() {
+    // Get the URL from the input box
+    const urlInput = document.getElementById('calendar-url');
+    const calendarUrl = urlInput.value.trim();
+    
+    console.log("🔄 Loading calendar with URL:", calendarUrl);
+    
+    // Check if URL is empty
+    if (!calendarUrl) {
+        alert("❌ Please paste a Google Calendar URL first");
+        urlInput.focus();
+        return;
+    }
+    
+    // Check if it's a Google Calendar URL
+    if (!calendarUrl.includes('calendar.google.com')) {
+        alert("⚠️ This doesn't look like a Google Calendar URL.\n\nMake sure it starts with: https://calendar.google.com/calendar/embed?...");
+        return;
+    }
+    
+    // Save to browser storage
+    localStorage.setItem('myCalendarUrl', calendarUrl);
+    console.log("💾 URL saved to browser storage");
+    
+    // Display the calendar
+    showCalendar(calendarUrl);
+    
+    alert("✅ Calendar loaded successfully!\n\nIt will automatically appear next time you visit.");
+}
+
+function showCalendar(calendarUrl) {
+    const calendarDiv = document.getElementById('google-calendar');
+    
+    console.log("🎨 Creating calendar iframe...");
+    
+    // Create the iframe to show Google Calendar
+    calendarDiv.innerHTML = `
+        <div class="calendar-container">
+            <iframe 
+                src="${calendarUrl}"
+                style="width: 100%; height: 600px; border: none; border-radius: 5px;"
+                frameborder="0"
+                scrolling="no">
+            </iframe>
+            <div class="calendar-links">
+                <a href="${calendarUrl}" target="_blank" class="open-tab">📖 Open in Full Tab</a>
+                <button onclick="changeCalendar()" class="change-btn">🔄 Change Calendar</button>
+                <button onclick="clearCalendar()" class="clear-btn">🗑️ Clear Calendar</button>
+            </div>
+        </div>
+    `;
+}
+
+// Helper function to paste a test URL
+function pasteTestUrl() {
+    const testUrl = "https://calendar.google.com/calendar/embed?src=en.usa%23holiday%40group.v.calendar.google.com&ctz=America%2FNew_York";
+    document.getElementById('calendar-url').value = testUrl;
+    console.log("🧪 Test URL pasted");
+    alert("Test calendar URL pasted! Now click 'Load Calendar' to see it.");
+}
+
+function changeCalendar() {
+    document.getElementById('calendar-url').value = '';
+    document.getElementById('calendar-url').focus();
+    alert("Enter a new Google Calendar URL above");
+}
+
+function clearCalendar() {
+    localStorage.removeItem('myCalendarUrl');
+    document.getElementById('calendar-url').value = '';
+    document.getElementById('google-calendar').innerHTML = `
+        <div class="placeholder">
+            <p>📆 Calendar cleared. Paste a new URL above.</p>
+        </div>
+    `;
+    alert("Calendar cleared!");
+}
+
+// ====================
+// BOOKING FUNCTIONS
+// ====================
+
+function bookAppointment(event) {
+    event.preventDefault(); // Stop form from refreshing page
+    
+    const date = document.getElementById('appointment-date').value;
+    const time = document.getElementById('appointment-time').value;
+    const name = document.querySelector('#bookingForm input[type="text"]').value;
+    
+    if (!date || !time || !name) {
+        alert("Please fill in all fields: Name, Date, and Time");
+        return;
+    }
+    
+    // Get the current calendar URL
+    const calendarUrl = localStorage.getItem('myCalendarUrl');
+    
+    if (!calendarUrl) {
+        alert("Please load a calendar first before booking");
+        return;
+    }
+    
+    // Create Google Calendar event
+    const startTime = `${date}T${time}:00`;
+    const endTime = `${date}T${addOneHour(time)}:00`;
+    
+    const googleEventUrl = 
+        `https://calendar.google.com/calendar/render?action=TEMPLATE` +
+        `&text=Appointment with ${encodeURIComponent(name)}` +
+        `&dates=${startTime}/${endTime}` +
+        `&details=Booked via website&location=Online&sf=true`;
+    
+    // Open in new tab
+    window.open(googleEventUrl, '_blank');
+    
+    // Show confirmation
+    alert(`✅ Appointment booked for ${date} at ${time}\n\nA Google Calendar event has been opened. Click "Save" to confirm.`);
+    
+    // Reset form
+    document.getElementById('bookingForm').reset();
+}
+
+function addOneHour(time) {
+    const [hours, minutes] = time.split(':').map(Number);
+    const newHour = (hours + 1) % 24;
+    return `${newHour.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+}
+
+// ====================
+// NAVIGATION
+// ====================
+
+function setupSmoothScroll() {
+    document.querySelectorAll('nav a').forEach(link => {
+        link.addEventListener('click', function(e) {
             e.preventDefault();
-            
-            // Get the target section ID from href attribute
             const targetId = this.getAttribute('href');
-            // Find that section on the page
             const targetSection = document.querySelector(targetId);
             
-            // Scroll smoothly to that section
-            window.scrollTo({
-                top: targetSection.offsetTop - 20,  // Position minus 20px
-                behavior: 'smooth'                  // Smooth animation
-            });
-            
-            // Log which section was clicked
-            console.log('Scrolling to:', targetId);
+            if (targetSection) {
+                window.scrollTo({
+                    top: targetSection.offsetTop - 20,
+                    behavior: 'smooth'
+                });
+            }
         });
     });
+}
+
+// ====================
+// ADD STYLES FOR CALENDAR LINKS
+// ====================
+const style = document.createElement('style');
+style.textContent = `
+    .calendar-links {
+        margin-top: 15px;
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+    }
     
-    // ====== PART 4: BONUS FEATURE - CHANGE HEADER COLOR ======
-    // Add this if you want more interactivity
-    const header = document.querySelector('header');
-    let colors = ['#4a6fa5', '#2c3e50', '#27ae60', '#8e44ad'];
-    let currentColor = 0;
+    .open-tab {
+        background: #3498db;
+        color: white;
+        padding: 8px 15px;
+        border-radius: 5px;
+        text-decoration: none;
+        font-size: 14px;
+    }
     
-    // Change header color every 5 seconds
-    setInterval(function() {
-        currentColor = (currentColor + 1) % colors.length;
-        header.style.backgroundColor = colors[currentColor];
-    }, 5000);  // 5000 milliseconds = 5 seconds
+    .change-btn, .clear-btn {
+        background: #95a5a6;
+        color: white;
+        border: none;
+        padding: 8px 15px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 14px;
+    }
     
-}); 
+    .clear-btn {
+        background: #e74c3c;
+    }
+    
+    .calendar-container {
+        text-align: center;
+    }
+`;
+document.head.appendChild(style);
