@@ -1,93 +1,79 @@
-<!-- Tells browser this is HTML5 document -->
 <!DOCTYPE html>
-<!-- Start HTML document, set language to English -->
-<html lang="en">
-<!-- Head section - contains page info not displayed -->
+<html>
 <head>
-    <!-- Character encoding - supports all symbols -->
-    <meta charset="UTF-8">
-    <!-- Makes website responsive on mobile devices -->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- Title shown in browser tab -->
-    <title>My Simple Website</title>
-    <!-- Links to external CSS file for styling -->
+    <title>My Booking Website</title>
     <link rel="stylesheet" href="style.css">
 </head>
-
-<!-- Body section - visible content of the page -->
 <body>
-    <!-- Header section at top of page -->
     <header>
-        <!-- Main heading (H1) - largest text -->
-        <h1>Kiwi Klients</h1>
-        <!-- Navigation menu -->
+        <h1>📅 Booking Calendar</h1>
         <nav>
-            <!-- Links to different sections of same page -->
-            <a href="#home">Home</a>  <!-- Home section link -->
-            <a href="#Schedule">Schedule</a>  <!-- Book section link -->
-            <a href="#about">Guide</a> <!-- About section link -->
-            <a href="#contact">Support</a> <!-- Contact section link -->
-            <a href="#notification">Notifications</a>  <!-- Notif section link -->
-
+            <a href="#home">Home</a>
+            <a href="#calendar">Calendar</a>
+            <a href="#book">Book</a>
         </nav>
     </header>
 
-    <!-- Main content area -->
     <main>
-        <!-- Section 1: where the booking calndar is shown -->
-        <section id="booking">
-            <!-- Subheading -->
-            <h2>Schedule an Appointment</h2>
-
-        <!-- Google Calendar Embed -->
-        <div class= "calendar-container"> 
-            <h3> My Availability Calendar </h3>
-            <div id = "google calendar">
-                <p>Loading calendar...</p>
-        </div>
-       
-
-      Calendar</a><br>
-            2. Create a new calendar for appointments<br>
-            3. Click "Settings and sharings"<br>
-            4. Copy the "Public URL to this calendar"<br>
-            5. Paste it below:
-    </p>
-
-    <div class ="calendar-setup">
-        <input type = "text" id = "calendar-url"
-            placeholder="Paste your Google Calendar embed URL here">
-            <button id = "load-calendar"> Load Calendar</button>
-            <small> Your calendar will be saved for future visits</small>
-    </div>
-</div>
-
-        <!-- Booking form -->
-
-        <div class = "booking form">
-            <h3> Book a Time Slot</h3>
-            <form id = "bookingForm">
-                <input type = "text" placeholder="Your Name" required>
-                <input type = "email" placeholder="Your Email" required>
-                <input type = "date" id = ="appointment-date" required>
-                <input type = "time" placeholder="appointment-time" required>
-                <textarea placeholder="Additional notes..." rows="3"></textarea>
-            <button type = "submit">Book Appointment</button>
-            </form>
-        </div>
+        <!-- HOME SECTION -->
+        <section id="home">
+            <h2>Welcome to Our Booking System</h2>
+            <p>Paste your Google Calendar URL below to display it.</p>
         </section>
 
+        <!-- CALENDAR SECTION -->
+        <section id="calendar">
+            <h2>Display Your Calendar</h2>
+            
+            <!-- STEP 1: URL Input -->
+            <div class="url-input-box">
+                <label for="calendar-url"><strong>Step 1: Paste Google Calendar URL</strong></label>
+                <p class="instruction">Get this from: Google Calendar → Your Calendar → Settings → "Embed code"</p>
+                
+                <div class="input-group">
+                    <input type="text" id="calendar-url" 
+                           placeholder="https://calendar.google.com/calendar/embed?src=..."
+                           style="width: 400px; padding: 10px;">
+                    <button id="load-calendar" class="load-btn">Load Calendar</button>
+                </div>
+                
+                <p class="note">✅ URL will be saved automatically for your next visit</p>
+            </div>
 
+            <!-- STEP 2: Calendar Display -->
+            <div class="calendar-display-box">
+                <h3>Step 2: Your Calendar Preview</h3>
+                <div id="google-calendar">
+                    <div class="placeholder">
+                        <p>📆 Calendar will appear here after you paste a URL above</p>
+                        <p><small>Try this test URL: 
+                            <button onclick="pasteTestUrl()" class="test-btn">Paste Test Calendar</button>
+                        </small></p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- BOOKING SECTION -->
+        <section id="book">
+            <h2>Book an Appointment</h2>
+            <form id="bookingForm">
+                <input type="text" placeholder="Your Name" required>
+                <input type="email" placeholder="Email" required>
+                <div class="datetime-group">
+                    <input type="date" id="appointment-date" required>
+                    <input type="time" id="appointment-time" required>
+                </div>
+                <textarea placeholder="Notes" rows="3"></textarea>
+                <button type="submit">Book Now</button>
             </form>
-        </div>
+        </section>
+    </main>
 
-    <!-- Footer at bottom of page -->
     <footer>
-        <!-- Copyright text -->
-        <p>&copy; 2026 Kiwi Klients</p>
+        <p>&copy; 2023 Booking Website</p>
     </footer>
 
-    <!-- Links to external JavaScript file -->
     <script src="script.js"></script>
 </body>
 </html>
