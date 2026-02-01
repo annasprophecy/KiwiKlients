@@ -1,58 +1,105 @@
 // Wait until page fully loads, then run this code
 document.addEventListener('DOMContentLoaded', function() {
     
-    // ====== PART 1: CLICK ME BUTTON ======
-    // Get the button with ID "clickMe" from HTML
-    const clickButton = document.getElementById('clickMe');
-    
-    // Add click event listener to the button
-    clickButton.addEventListener('click', function() {
-        // Show popup message when button is clicked
-        alert('Hello! Thanks for visiting!');
-        // Also log to browser console (press F12 to see)
-        console.log('User clicked the "Click Me" button');
+    // *Google Calendar Integration*
+
+    // Default Google Calendar embed code (replace with YOUR OWN CODE)
+const DEFAULT_CALENDAR_URL = "https://calendar.google.com/calendar/embed?src=en.usa%23holiday%40group.v.calendar.google.com&ctz=America%2FNew_York";
+    // Load calendar when page loads
+    loadSavedCalendar();
+
+    // Load Calendar Button
+    document.getElementById('load-calendar').addEventListener('click', function() {
+        loadCustomCalendar();
     });
-    
-    // ====== PART 2: FORM VALIDATION ======
-    // Get the form with ID "contactForm" from HTML
-    const contactForm = document.getElementById('contactForm');
-    
-    // Add submit event listener to the form
-    contactForm.addEventListener('submit', function(e) {
-        // Prevent form from submitting normally (page refresh)
+        
+    // Booking Form Submission
+    document.getElementById('bookingForm').addEventListener('submit', function(e) {
         e.preventDefault();
-        
-        // Get all input fields inside the form
-        const inputs = this.querySelectorAll('input, textarea');
-        // Variable to track if all fields are filled
-        let allFilled = true;
-        
-        // Loop through each input field
-        inputs.forEach(input => {
-            // Check if input is empty (trim removes whitespace)
-            if (!input.value.trim()) {
-                allFilled = false;  // Mark as not filled
-                input.style.borderColor = 'red';  // Show red border
-            } else {
-                input.style.borderColor = '#ddd'; // Reset to gray
-            }
-        });
-        
-        // Check result of validation
-        if (allFilled) {
-            // Show success message
-            alert('Message sent successfully! (This is a demo)');
-            // Clear all form fields
-            this.reset();
-            // Log to console
-            console.log('Form submitted successfully');
-        } else {
-            // Show error message
-            alert('Please fill all fields');
-            console.log('Form validation failed');
-        }
+        bookAppointment();
     });
-    
+
+    // ====== CALENDAR FUNCTIONS ======
+
+    // Load user's saved calendar or default
+    function loadSavedCalendar() {
+        // Check if user previously saved a calendar URL
+        const savedUrl = localStorage.getItem('userCalendarUrl');
+        const urlToLoad = savedUrl || DEFAULT_CALENDAR_URL;
+
+        document.getElementById('calendar-url').value = savedUrl || '';
+        displayCalendar(urlToLoad);
+    }
+
+    // Display calendar in iframe
+    function displayCalendar(calendarUrl) {
+        const calendarDiv = document.getElementById('google-calendar');
+        
+        // Create iframe for Google Calendar
+        calendarDiv.innerHTML = `
+            <iframe src="${calendarUrl}"
+                    class="calendar-iframe"
+                    frameborder="0"
+                    scrolling="no">
+            </iframe>
+            <p><small>Can't see calendar? <a href="${calendarUrl}" target="_blank">Open in new tab</a></small></p>
+        `;
+    }
+
+    // Load custom calendar from user input
+    function loadCustomCalendar() {
+        const calendarUrl = document.getElementById('calendar-url').value.trim();
+
+        if(!calendarUrl) {
+            alert('Please enter a calendar URL');
+            return;
+        }
+
+        // Save to browser storage for future visits
+        localStorage.setItem('userCalendarUrl', calendarUrl);
+
+        // Display the calendar
+        displayCalendar(calendarUrl);
+
+        alert('Calendar saved! It will load automatically next time.');
+    }
+
+    // Handle booking appointment
+    function bookAppointment() {
+        const form = document.getElementById('bookingForm');
+        const date = document.getElementById('appointment-date').value;
+        const time = document.getElementById('appointment-time').value;
+
+        // Get user's calendar URL
+        const calendarUrl = localStorage.getItem('userCalendarUrl') || DEFAULT_CALENDAR_URL;
+
+        if (!date || !time) {
+            alert('Please select both date and time');
+            return;
+        }
+
+        // Create google calendar event link
+        const appointmentDateTime = `${date}T${time}:00`;
+        const endDateTime = `${date}T${addOneHour(time)}:00`;
+
+        // Google calendar event creation URL
+        const googleCalendarUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&dates=${appointmentDateTime}/${endDateTime}&details=Appointment booked via website&location=Online`;
+
+        // Open in new tab
+        window.open(googleCalendarUrl, '_blank');
+
+        // Show confirmation
+        alert(`Appointment booked for ${date} at ${time}. A Google Calendar event has been created.`);
+        form.reset();
+    }
+
+    // Helper: Add 1 hour to time for end time
+    function addOneHour(time) {
+        const [hours, minutes] = time.split(':').map(Number);
+        const newHour = (hours + 1) % 24;
+        return newHour.toString().padStart(2, '0') + ':' + minutes.toString().padStart(2, '0');
+    }
+
     // ====== PART 3: SMOOTH SCROLLING ======
     // Get all navigation links
     const navLinks = document.querySelectorAll('nav a');
@@ -91,4 +138,4 @@ document.addEventListener('DOMContentLoaded', function() {
         header.style.backgroundColor = colors[currentColor];
     }, 5000);  // 5000 milliseconds = 5 seconds
     
-});
+}); 

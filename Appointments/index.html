@@ -19,55 +19,72 @@
     <!-- Header section at top of page -->
     <header>
         <!-- Main heading (H1) - largest text -->
-        <h1>Welcome to My Website</h1>
+        <h1>Kiwi Klients</h1>
         <!-- Navigation menu -->
         <nav>
             <!-- Links to different sections of same page -->
-            <a href="#home">Home</a>      <!-- Home section link -->
-            <a href="#about">About</a>    <!-- About section link -->
-            <a href="#contact">Contact</a> <!-- Contact section link -->
+            <a href="#home">Home</a>  <!-- Home section link -->
+            <a href="#Schedule">Schedule</a>  <!-- Book section link -->
+            <a href="#about">Guide</a> <!-- About section link -->
+            <a href="#contact">Support</a> <!-- Contact section link -->
+            <a href="#notification">Notifications</a>  <!-- Notif section link -->
+
         </nav>
     </header>
 
     <!-- Main content area -->
     <main>
-        <!-- Section 1: Home section with ID for linking -->
-        <section id="home">
+        <!-- Section 1: where the booking calndar is shown -->
+        <section id="booking">
             <!-- Subheading -->
-            <h2>Home Section</h2>
-            <!-- Paragraph text -->
-            <p>This is a simple website built from scratch.</p>
-            <!-- Button with ID for JavaScript to target -->
-            <button id="clickMe">Click Me!</button>
-        </section>
+            <h2>Schedule an Appointment</h2>
 
-        <!-- Section 2: About section -->
-        <section id="about">
-            <h2>About Us</h2>
-            <p>We create simple, beautiful websites.</p>
-        </section>
+        <!-- Google Calendar Embed -->
+        <div class= "calendar-container"> 
+            <h3> My Availability Calendar </h3>
+            <div id = "google calendar">
+                <p>Loading calendar...</p>
+        </div>
+       
 
-        <!-- Section 3: Contact section with form -->
-        <section id="contact">
-            <h2>Contact</h2>
-            <!-- Form for user input -->
-            <form id="contactForm">
-                <!-- Text input field for name -->
-                <input type="text" placeholder="Your Name" required>
-                <!-- Email input field -->
-                <input type="email" placeholder="Your Email" required>
-                <!-- Multi-line text area for message -->
-                <textarea placeholder="Your Message" rows="4" required></textarea>
-                <!-- Submit button for form -->
-                <button type="submit">Send Message</button>
+      Calendar</a><br>
+            2. Create a new calendar for appointments<br>
+            3. Click "Settings and sharings"<br>
+            4. Copy the "Public URL to this calendar"<br>
+            5. Paste it below:
+    </p>
+
+    <div class ="calendar-setup">
+        <input type = "text" id = "calendar-url"
+            placeholder="Paste your Google Calendar embed URL here">
+            <button id = "load-calendar"> Load Calendar</button>
+            <small> Your calendar will be saved for future visits</small>
+    </div>
+</div>
+
+        <!-- Booking form -->
+
+        <div class = "booking form">
+            <h3> Book a Time Slot</h3>
+            <form id = "bookingForm">
+                <input type = "text" placeholder="Your Name" required>
+                <input type = "email" placeholder="Your Email" required>
+                <input type = "date" id = ="appointment-date" required>
+                <input type = "time" placeholder="appointment-time" required>
+                <textarea placeholder="Additional notes..." rows="3"></textarea>
+            <button type = "submit">Book Appointment</button>
             </form>
+        </div>
         </section>
-    </main>
+
+
+            </form>
+        </div>
 
     <!-- Footer at bottom of page -->
     <footer>
         <!-- Copyright text -->
-        <p>&copy; 2023 My Simple Website</p>
+        <p>&copy; 2026 Kiwi Klients</p>
     </footer>
 
     <!-- Links to external JavaScript file -->
